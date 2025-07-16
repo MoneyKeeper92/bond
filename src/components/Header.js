@@ -4,6 +4,7 @@ import { formatPercentage } from '../utils/formatUtils';
 import '../styles/Header.css';
 
 const Header = ({
+  studentName,
   completedCount,
   resetProgress,
   masteryLevel
@@ -25,6 +26,11 @@ const Header = ({
   return (
     <header className="header">
       <div className="header-content">
+        <div className="title-section">
+          <h1>Bond Accounting Practice</h1>
+          {studentName && <p className="welcome-message">Welcome, {studentName}!</p>}
+        </div>
+
         <div className="progress-info">
           <div className="progress-text">
             Progress: {completedCount}/{totalScenariosInApp} Scenarios

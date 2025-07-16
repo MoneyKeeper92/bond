@@ -1,8 +1,15 @@
 // src/components/JournalEntryForm.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import JournalTable from './JournalTable';
 import { formatCurrency } from '../utils/formatUtils';
 import '../styles/JournalEntry.css';
+
+// Helper function to format calculation keys
+const formatCalcKey = (key) => {
+  // Convert camelCase to Title Case
+  const result = key.replace(/([A-Z])/g, " $1");
+  return result.charAt(0).toUpperCase() + result.slice(1);
+};
 
 const JournalEntryForm = ({ 
   scenario, 
@@ -24,6 +31,7 @@ const JournalEntryForm = ({
   const [errorMessage, setErrorMessage] = useState('');
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [lastScenarioId, setLastScenarioId] = useState(scenario.id);
+  const successDialogRef = useRef(null);
 
   // Reset form only when scenario changes
   useEffect(() => {
@@ -40,15 +48,16 @@ const JournalEntryForm = ({
     }
   }, [scenario.id, scenario.solution, onCheck, lastScenarioId]);
 
+  // Scroll to success dialog when it appears
   useEffect(() => {
-    if (showSuccessDialog) {
+    if (showSuccessDialog && successDialogRef.current) {
+      // Use a small timeout to ensure the element is rendered before scrolling
       const timer = setTimeout(() => {
-        setShowSuccessDialog(false);
-        onAdvance();
-      }, 1500);
+        successDialogRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
       return () => clearTimeout(timer);
     }
-  }, [showSuccessDialog, onAdvance]);
+  }, [showSuccessDialog]);
 
   const checkAgainstSolution = (userEntries, solution) => {
     console.log("Running checkAgainstSolution");
@@ -170,6 +179,11 @@ const JournalEntryForm = ({
     }
   };
 
+  const handleNext = () => {
+    setShowSuccessDialog(false);
+    onAdvance();
+  };
+
   return (
     <div className="journal-form-container">
       <h2 className="journal-heading">
@@ -179,7 +193,7 @@ const JournalEntryForm = ({
       <JournalTable 
         journalLines={journalLines}
         updateLine={updateLine}
-        leaseType={scenario.leaseType}
+        bondType={scenario.bondType}
       />
       
       <div className="journal-button-container">
@@ -215,8 +229,84 @@ const JournalEntryForm = ({
       )}
 
       {showSuccessDialog && (
-        <div className="success-dialog">
-          Correct! Moving to next question...
+        <div className="success-dialog" ref={successDialogRef} style={{maxWidth: '800px', margin: '1rem auto', textAlign: 'left'}}>
+          <div className="success-message" style={{fontWeight: 'bold', marginBottom: '1rem', color: '#2d3748'}}>
+            {scenario.successMessage || 'Correct! Review the calculations below.'}
+          </div>
+          
+          {scenario.keyCalculations && Object.keys(scenario.keyCalculations).length > 0 && (
+            <div 
+              className="key-calculations-section" 
+              style={{
+                backgroundColor: '#e9f7ef', 
+                borderRadius: '8px', 
+                borderLeft: '5px solid #68d3a7', 
+                padding: '15px', 
+                marginTop: '1rem',
+                fontFamily:'\'Segoe UI\',Arial,sans-serif'
+              }}
+            >
+              <h4 style={{color: '#01506e', marginTop: '0', marginBottom: '15px'}}>
+                Key Calculations
+              </h4>
+              <div className="calculation-details">
+                {scenario.keyCalculations.overview && (
+                  <div 
+                    className="calculation-overview" 
+                    style={{
+                      backgroundColor: '#f9f9f9',
+                      borderLeft: '5px solid #68d3a7',
+                      borderRadius: '5px',
+                      marginBottom: '15px',
+                      padding: '15px'
+                    }}
+                  >
+                     <h5 style={{color: '#01506e', marginTop: '0', marginBottom: '10px'}}>Overview</h5>
+                    <p style={{margin: '0', color: '#333'}}>{scenario.keyCalculations.overview}</p>
+                  </div>
+                )}
+                
+                {Object.entries(scenario.keyCalculations).map(([key, value]) => (
+                  key !== 'overview' && (
+                    <div 
+                      className="calculation-detail-item" 
+                      key={key} 
+                      style={{ marginBottom: '8px', paddingLeft: '5px' }}
+                    >
+                      <strong style={{ color: '#01506e', display: 'inline-block', minWidth: '180px' }}>
+                        {formatCalcKey(key)}:
+                      </strong>
+                      <span style={{ color: '#333', marginLeft: '10px' }}>
+                        {typeof value === 'object' && value !== null 
+                          ? JSON.stringify(value)
+                          : value
+                        }
+                      </span>
+                    </div>
+                  )
+                ))}
+              </div>
+            </div>
+          )}
+          
+          <button 
+            className="next-question-button" 
+            onClick={handleNext}
+            style={{
+              marginTop: '1rem',
+              padding: '0.75rem 1.5rem',
+              border: 'none',
+              borderRadius: '6px',
+              backgroundColor: '#207bb5',
+              color: 'white',
+              fontSize: '1rem',
+              fontWeight: 500,
+              cursor: 'pointer',
+              transition: 'background-color 0.3s ease'
+            }}
+           >
+            Next Question
+          </button>
         </div>
       )}
     </div>

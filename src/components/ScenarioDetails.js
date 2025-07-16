@@ -4,53 +4,54 @@ import { formatCurrency, formatPercentage } from '../utils/formatUtils';
 import '../styles/ScenarioDetails.css';
 
 const ScenarioDetails = ({ scenario, attempts }) => {
+  if (!scenario) {
+    return <div>Loading scenario details...</div>;
+  }
+
+  // Helper function to format rate, handling potential null/undefined
+  const formatRate = (rate) => rate ? formatPercentage(rate) : 'N/A';
+
   return (
-    <div className="scenario-details">
-      <div className="scenario-content">
-        <div className="scenario-info">
-          <p className="task">{scenario.task}</p>
-          
-          <div className="details-grid">
-            <div className="detail-item">
-              <label>Lease Type:</label>
-              <span>{scenario.leaseType.charAt(0).toUpperCase() + scenario.leaseType.slice(1)} Lease</span>
-            </div>
-
-            <div className="detail-item">
-              <label>Initial Lease Liability:</label>
-              <span>{formatCurrency(scenario.initialLeaseLiability)}</span>
-            </div>
-            
-            <div className="detail-item">
-              <label>Annual Payment:</label>
-              <span>{formatCurrency(scenario.annualPayment)}</span>
-            </div>
-            
-            <div className="detail-item">
-              <label>Interest Rate:</label>
-              <span>{formatPercentage(scenario.interestRate)}</span>
-            </div>
-            
-            <div className="detail-item">
-              <label>Payment Timing:</label>
-              <span>{scenario.paymentTiming}</span>
-            </div>
-
-            {scenario.leaseTerm && (
-              <div className="detail-item">
-                <label>Lease Term:</label>
-                <span>{scenario.leaseTerm}</span>
-              </div>
-            )}
-          </div>
-
-          {scenario.additionalInfo && (
-            <div className="additional-info">
-              <h4>Additional Information:</h4>
-              <p>{scenario.additionalInfo}</p>
-            </div>
-          )}
+    <div className="scenario-details-container">
+      <h3>Scenario Details</h3>
+      <div className="details-grid">
+        {/* Basic Info - Removed Bond Type */}
+        <div className="detail-item">
+          <label>Face Value:</label>
+          <span>{formatCurrency(scenario.faceValue)}</span>
         </div>
+         <div className="detail-item">
+           <label>Issue Price:</label>
+           <span>{formatCurrency(scenario.issuePrice)}</span>
+         </div>
+         <div className="detail-item">
+           <label>Bond Life (Years):</label>
+           <span>{scenario.lifeYears || 'N/A'}</span>
+         </div>
+
+        {/* Rates */}
+        <div className="detail-item">
+          <label>Stated Rate (Coupon):</label>
+          <span>{formatRate(scenario.statedRate)}</span>
+        </div>
+        <div className="detail-item">
+          <label>Effective Rate (Market):</label>
+          <span>{formatRate(scenario.effectiveRate)}</span>
+        </div>
+
+        {/* Dates & Timing - Removed Scenario Date and Issue Date */}
+        <div className="detail-item">
+           <label>Payment Frequency:</label>
+           <span>{scenario.paymentFrequency || 'N/A'}</span>
+        </div>
+
+         {/* Other Details - Removed Amortization & Carrying Value */}
+      </div>
+
+      {/* Task & Overview */}
+      <div className="scenario-task">
+        <h4>Task</h4>
+        <p>{scenario.task}</p>
       </div>
     </div>
   );
