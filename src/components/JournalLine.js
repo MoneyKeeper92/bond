@@ -14,10 +14,6 @@ const JournalLine = ({ line, index, updateLine, removeLine, bondType }) => {
     setAccountInput(line.account || '');
   }, [line.account]);
 
-  const handleAccountChange = (selectedOption) => {
-    updateLine(line.id, 'account', selectedOption ? selectedOption.value : '');
-  };
-
   // Define standard account names based on bond type
   let standardAccounts = [
     // Common accounts
