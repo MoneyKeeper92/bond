@@ -127,6 +127,16 @@ function App() {
     }
   };
 
+  const previousScenario = () => {
+    const currentIndex = sortedScenarios.findIndex(s => s.id === currentId);
+    if (currentIndex > 0) {
+      setCurrentId(sortedScenarios[currentIndex - 1].id);
+      setShowSolution(false);
+      setIsCorrect(null);
+      setShowFeedback(false);
+    }
+  };
+
   // Mark current scenario as completed and update performance
   const markCompleted = (isCorrect = true) => {
     const scenarioId = currentScenario.id;
@@ -190,6 +200,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <h1 className="main-title">Bond Accounting Practice</h1>
       <Header 
         studentName={studentName}
         currentIndex={currentId - 1} // Convert ID to 0-based index for display
@@ -223,6 +234,8 @@ function App() {
               showSolution={showSolution}
               isCorrect={isCorrect}
               onAdvance={nextScenario}
+              onPrevious={previousScenario}
+              isFirstScenario={currentId === 1}
             />
             
             {showSolution && (

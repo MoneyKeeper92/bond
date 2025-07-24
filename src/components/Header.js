@@ -26,11 +26,7 @@ const Header = ({
   return (
     <header className="header">
       <div className="header-content">
-        <div className="title-section">
-          <h1>Bond Accounting Practice</h1>
-          {studentName && <p className="welcome-message">Welcome, {studentName}!</p>}
-        </div>
-
+        {studentName && <p className="welcome-message">Welcome, {studentName}!</p>}
         <div className="progress-info">
           <div className="progress-text">
             Progress: {completedCount}/{totalScenariosInApp} Scenarios

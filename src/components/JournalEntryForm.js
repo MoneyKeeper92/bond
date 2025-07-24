@@ -17,7 +17,9 @@ const JournalEntryForm = ({
   toggleSolution, 
   showSolution,
   isCorrect,
-  onAdvance
+  onAdvance,
+  onPrevious,
+  isFirstScenario
 }) => {
   // Initialize with the exact number of lines needed based on solution
   const [journalLines, setJournalLines] = useState(() => {
@@ -212,13 +214,21 @@ const JournalEntryForm = ({
         >
           {showSolution ? 'Hide Solution' : 'Show Solution'}
         </button>
+      </div>
 
-        <button
-          className="skip-button"
-          onClick={onAdvance}
-          type="button"
+      <div className="navigation-controls">
+        <button 
+          className="btn-secondary" 
+          onClick={onPrevious} 
+          disabled={isFirstScenario}
         >
-          Skip Question
+          Previous
+        </button>
+        <button 
+          className="btn-primary" 
+          onClick={onAdvance}
+        >
+          Next
         </button>
       </div>
       
